@@ -1,10 +1,14 @@
-# SISMID 2026 minimal environment.
-# Kept intentionally small for the initial lightweight Codespace.
-# Versions will be pinned before the course for a fully reproducible build.
-numpy
-pandas
-matplotlib
-scikit-learn
-jupyterlab
-ipykernel
-requests
+# SISMID 2026 environment - pinned for a reproducible Codespace build.
+# Verified 2026-07-19 on Python 3.12 (devcontainers/python:3.12-bookworm):
+# all Day 1 (Google Trends) and Day 2 (Wikipedia, wastewater) notebooks execute clean.
+numpy==2.5.1
+pandas==3.0.3
+matplotlib==3.11.1
+scikit-learn==1.9.0
+jupyterlab==4.6.1
+ipykernel==7.3.0
+requests==2.34.2
+pytrends==4.9.2
+# pytrends 4.9.2 calls urllib3 Retry(method_whitelist=...), which urllib3 2.x removed;
+# pin urllib3 <2 so pytrends works (incl. TrendReq(retries=...)).
+urllib3==1.26.20
