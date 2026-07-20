@@ -1,0 +1,350 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% ============================================================
+% SISMID 2026 -- Day 1, 3:30 session
+% Using AI agents for data scraping (S. Yang + C. Djorno)
+% General agent-scraping recipe -> a menu of streams (Wikipedia,
+% wastewater, mobility, news) -> elaborate agent-driven scraping
+% -> when scraping is blocked: proxy / VPN -> Plan B.
+% (Proxy/VPN discussion lives HERE, not in the 9:45 first encounter.)
+% Compile: pdflatex ai-agents-data-scraping.tex  (run twice)
+% ============================================================
+
+\IfFileExists{beamerthememetropolis.sty}{
+  \usetheme{metropolis}
+  \metroset{progressbar=frametitle, sectionpage=progressbar, numbering=fraction}
+}{
+  \usetheme{Boadilla}
+  \usecolortheme{seahorse}
+  \setbeamertemplate{navigation symbols}{}
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\definecolor{AccentA}{HTML}{2A6F97}
+\definecolor{AccentB}{HTML}{C1666B}
+\definecolor{AccentC}{HTML}{3B8A5B}
+\setbeamercolor{frametitle}{bg=AccentA}
+\setbeamercolor{progress bar}{fg=AccentB}
+
+\definecolor{skbg}{rgb}{0.96,0.96,0.94}
+\lstdefinestyle{prompt}{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{skbg},
+  showstringspaces=false, breaklines=true,
+  frame=single, framesep=4pt, columns=fullflexible, numbers=none,
+}
+\lstset{style=prompt}
+
+\tikzset{
+  cbox/.style={draw=AccentA, very thick, rounded corners, align=center,
+    minimum height=1.0cm, inner sep=6pt, font=\small, fill=AccentA!6},
+  sbox/.style={draw=AccentA, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentA!6},
+  rbox/.style={draw=AccentB, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentB!8},
+  gbox/.style={draw=AccentC, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentC!8},
+  flow/.style={-{Stealth[length=3mm]}, very thick, draw=AccentB},
+  flowq/.style={-{Stealth[length=2.4mm]}, thick, draw=AccentA!70},
+}
+
+\title{Using AI Agents for Data Scraping}
+\subtitle{Google Trends for your own topic, and getting everyone started}
+\author{Shihao Yang \quad\textbullet\quad Candice Djorno}
+\institute{SISMID 2026 \textbullet\ Day 1, 3:30}
+\date{July 20, 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{From one topic to your topic}
+  This morning you scraped Google Trends for \textbf{one} topic (dengue in Mexico). This
+  session gets \textbf{everyone} comfortable scraping Google Trends for \textbf{their own}
+  disease and place, before we add other streams tomorrow.
+  \begin{block}{The goal this session}
+    A reliable, repeatable way to pull Google Trends for whatever you care about, with the
+    agent doing the typing and you keeping the judgment.
+  \end{block}
+  \vspace{0.3em}
+  \begin{itemize}
+    \item The agent is the \textbf{coding tool woven through the whole course}; today we make
+          it second nature on the stream you already know.
+    \item \textbf{Plan B} pre-filled notebooks exist, so preferring not to drive an agent
+          never blocks you.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Roadmap}
+  \tableofcontents
+\end{frame}
+
+% ===============================================================
+\section{The general recipe}
+
+\begin{frame}{Every stream, the same five steps}
+  \begin{center}
+  \resizebox{0.96\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=0.9cm]
+    \node[sbox] (f) {\textbf{fetch}\\call the API\\(or agent browser)};
+    \node[sbox, right=of f] (t) {\textbf{tidy}\\date + value\\columns};
+    \node[sbox, right=of t] (p) {\textbf{plot}\\look before\\trusting};
+    \node[rbox, right=of p] (s) {\textbf{sanity-check}\\range, gaps,\\reproducible?};
+    \node[gbox, right=of s] (v) {\textbf{save}\\tidy CSV};
+    \draw[flow] (f) -- (t); \draw[flow] (t) -- (p); \draw[flow] (p) -- (s); \draw[flow] (s) -- (v);
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.4em}
+  \begin{center}
+    \itshape You learned this on Google Trends this morning. It does not change from stream
+    to stream. Only the fetch step differs, and the agent handles that.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Anatomy of a good scrape prompt}
+  Four ingredients: the \textbf{outcome}, the \textbf{source}, the \textbf{shape}, and the
+  \textbf{check}.
+  \begin{block}{Template}
+  \begin{lstlisting}
+Pull <what series> for <place/topic> over <time window>
+from <source / API>. Return a tidy DataFrame: a date
+column plus one column per series. Then plot it and tell
+me <the check: date range, missing values, does it look
+seasonal?>.
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape The check is not optional. It is what keeps the agent honest and what teaches
+    you to read the output.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Scrape it for your own topic}
+  The whole point: swap in \emph{your} disease and place. One sentence changes.
+  \begin{block}{Prompt (edit the two bold parts)}
+  \begin{lstlisting}
+Using pytrends, pull Google Trends for my topic:
+terms about *RSV* in *the United States* (geo=US),
+past 5 years. Tidy date + one column per term, retry on
+429, plot, and print the last date.
+  \end{lstlisting}
+  \end{block}
+  \begin{itemize}
+    \item Everyone in the room can pull a \emph{different} disease and place at the same
+          time. No one pre-stages a CSV for each.
+    \item This is the ``you no longer need a HealthMap'' idea: the agent assembles a signal
+          for \emph{your} county and \emph{your} disease on the spot.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Term vs topic (and building a topic from phrases)}
+  Google Trends can give you two different things for ``flu'':
+  \begin{itemize}
+    \item a \textbf{term} (the literal string), which misses synonyms, spellings, and other
+          languages, and shows more zeros; or
+    \item a \textbf{topic} (Google's aggregated Knowledge Graph entity), which folds all of
+          those together, with more volume and fewer zeros.
+  \end{itemize}
+  Two ways to reach a topic-like signal with the agent:
+  \begin{block}{Prompt}
+  \begin{lstlisting}
+Pull three things for my disease and compare: (1) the
+individual terms, (2) one combined additive query joining
+the phrases with " + " (a topic-like OR), and (3) the real
+Google Trends topic entity (resolve it with pytrends
+suggestions and pull by its mid). Which has the fewest
+zeros and the strongest seasonal signal?
+  \end{lstlisting}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Verify what the agent produced (still your job)}
+  Fast is not the same as correct. Every scraped stream earns a few cheap checks:
+  \begin{itemize}
+    \item \textbf{Range and gaps:} does the span match what you asked? Missing weeks become
+          wrong models.
+    \item \textbf{Scale sanity:} plausible values, not all zeros or a flat line from a
+          failed pull.
+    \item \textbf{Reproducibility:} pull twice. Google Trends is noisy, so two pulls can
+          differ; that is the sampling issue from this afternoon.
+    \item \textbf{Face validity:} do the peaks land in the right season?
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{alertblock}{The habit}
+    One plot and one sanity question per stream, before it enters any model.
+  \end{alertblock}
+\end{frame}
+
+% ===============================================================
+\section{Making the scrape robust}
+
+\begin{frame}{Google Trends has no official API}
+  Google Trends is itself the messy case: no official API, an internal endpoint that keeps
+  changing, aggressive rate limits, and the sampling instability from this afternoon.
+  \begin{itemize}
+    \item \texttt{pytrends} scrapes that endpoint for you; when it breaks, the agent reads
+          the error, adjusts, and retries, instead of you fighting it.
+    \item You describe the \emph{outcome} (terms, geo, window, retry-on-429); the agent
+          writes the plumbing and hands you a tidy CSV.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{block}{The shift}
+    Old way: fight an unofficial API for an afternoon. New way: a paragraph, then you are
+    checking a plot. The hard part becomes \textbf{judgment}, not plumbing.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Let the agent run the whole loop}
+  A single, richer prompt can chain the steps and leave you an artifact to inspect:
+  \begin{center}
+  \resizebox{0.95\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=0.8cm]
+    \node[sbox] (a) {find the\\API / docs};
+    \node[sbox, right=of a] (b) {write the\\scraper};
+    \node[sbox, right=of b] (c) {run + fix\\errors};
+    \node[rbox, right=of c] (d) {sanity-\\check};
+    \node[gbox, right=of d] (e) {cache a\\snapshot};
+    \draw[flow] (a) -- (b); \draw[flow] (b) -- (c); \draw[flow] (c) -- (d); \draw[flow] (d) -- (e);
+  \end{tikzpicture}}
+  \end{center}
+  \vspace{0.4em}
+  \begin{center}
+    \itshape You stay in the loop at the sanity-check. The agent does the typing and the
+    debugging around it.
+  \end{center}
+\end{frame}
+
+% ===============================================================
+\section{When scraping is blocked: proxy and VPN}
+
+\begin{frame}{Getting blocked is a normal part of scraping}
+  Pull hard enough, from the wrong kind of address, and a server pushes back with a
+  \textbf{429} or an outright block. Three tiers, in order:
+  \begin{itemize}
+    \item \textbf{First: retry.} Most 429s clear on a wait-and-retry. We tested Google Trends
+          from a Codespace on an \textbf{Azure} IP: 429, wait, then success. Usually enough.
+    \item \textbf{Backup: a proxy or VPN.} If retries keep failing (a whole room at once, or a
+          venue whose IP is blocked), route through a machine with an ordinary IP.
+    \item \textbf{Last resort: the cache.} Every stream ships a cached snapshot, so no one is
+          ever stuck.
+  \end{itemize}
+  \vspace{0.2em}
+  \begin{center}
+    \itshape We would rather route around a block than accept it. The cache is the floor, not
+    the plan.
+  \end{center}
+\end{frame}
+
+\begin{frame}{What is a proxy or a VPN?}
+  Every request your computer sends carries a ``return address'' (its IP). When a site blocks
+  that address, you route the request through \emph{another} machine, so the site sees
+  \emph{its} address instead of yours.
+  \begin{itemize}
+    \item \textbf{Proxy:} reroute just one app (here, the data download).
+    \item \textbf{VPN:} reroute \emph{all} of a machine's traffic the same way.
+  \end{itemize}
+  A spare laptop on ordinary home internet becomes a normal-looking doorway for our cloud
+  Codespaces, whose Azure address some sites throttle.
+  \vspace{0.2em}
+  \begin{center}
+    \itshape Same trick a traveler uses to watch home TV abroad. Nothing exotic.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{You do not set this up by hand: ask an agent}
+  Standing up a proxy used to be a sysadmin chore. Now you describe the goal in plain words
+  and let a coding agent handle the details:
+  \begin{block}{Prompt (paste into the agent on your spare machine)}
+  \begin{lstlisting}
+I'm teaching a class and a website is blocking our shared
+cloud computers from downloading data. I have a spare
+laptop on normal home internet. Set it up so my students
+can send their downloads through this machine, and tell me
+in plain steps what to run and exactly what each student
+types. Keep it simple and secure.
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape The agent picks the tool, sets a password, and hands you the student line.
+    We already built ours; here is the proof.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{We built one, and it works}
+  We stood up exactly this: a spare machine on ordinary home broadband running a small,
+  password-protected proxy (tinyproxy), reachable from anywhere via a tunnel (ngrok).
+  \begin{block}{Proof, from a real Codespace routed through it}
+  \begin{lstlisting}
+egress via proxy: a residential IP   (home broadband, NOT Azure)
+homepage: 200   token: 200   data: 200
+SUCCESS: 92 weekly points; last point = this week
+VERDICT: Google Trends scraping WORKS via the proxy
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape A student turns it on with one line:
+    \texttt{export HTTPS\_PROXY=http://user:pass@host:port}
+  \end{center}
+\end{frame}
+
+% ===============================================================
+\section{Plan B and wrap-up}
+
+\begin{frame}{Plan B is a first-class path}
+  Not everyone wants to drive an agent, and that is fine.
+  \begin{itemize}
+    \item Every stream has a \textbf{pre-filled notebook} that is a captured example of what
+          the agent produces from these prompts. Run it top to bottom.
+    \item Every stream has a \textbf{cached snapshot}, so a failed or blocked live pull is a
+          non-event.
+    \item Pair up: an experienced neighbor plus the agent is the fastest way to learn what
+          good output looks like.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{center}
+    \itshape Lane A (agent) and Lane B (notebook) reach the same tidy CSV. Switch any time.
+  \end{center}
+\end{frame}
+
+\begin{frame}{What you can now do}
+  \begin{itemize}
+    \item Scrape \textbf{Google Trends} for \textbf{your own} disease and place with one
+          prompt, and check the result yourself.
+    \item Make it robust: retry on 429, keep the sampling gotchas in mind.
+    \item Get \textbf{around a block} with retry, then a proxy or VPN, with the cache as a
+          floor.
+    \item Fall back to Plan B notebooks whenever you prefer.
+  \end{itemize}
+  \vfill
+  \begin{center}
+    \itshape The agent is your data-collection layer for the rest of the week.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Looking ahead: Day 2}
+  \begin{itemize}
+    \item \textbf{Tomorrow morning:} data beyond Google Trends, Wikipedia pageviews and
+          wastewater in depth, scraped the same way you did today.
+    \item \textbf{Then:} mobility and news, and folding every stream into ARGO and the
+          capstone.
+  \end{itemize}
+  \vfill
+  \begin{center}
+    \itshape You have the method. Day 2 is just more streams through the same loop.
+  \end{center}
+\end{frame}
+
+\begin{frame}[standout]
+  Questions?\\[0.4em]
+  \small Repo: \texttt{github.com/Shihao-Yang/sismid2026}
+\end{frame}
+
+\end{document}

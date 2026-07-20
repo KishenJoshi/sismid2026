@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue}
+\usepackage{parskip}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries The Dengue Exercise}\\[2pt]
+  {\normalsize SISMID 2026 \textbullet\ Day 1, 11:00 \textbullet\ Map a search signal onto disease activity}
+\end{center}
+
+\medskip
+
+Dengue fever is a mosquito-borne viral disease affecting millions of people in tropical
+regions. In this exercise you build a simple version of the digital disease-detection tool
+\emph{Google Dengue Trends} for Mexico: fit a line from Google \textbf{search} interest to
+reported dengue \textbf{cases} on the early years, then use it to predict the later years
+from search alone, and judge how well a cheap, fast search signal stands in for slow
+official case reports.
+
+\textbf{Data.} \texttt{data/MX\_Dengue\_trends.csv} (Mexico, monthly, 2004--2011). The
+\texttt{Date} column is the month. \texttt{Dengue CDC} is the number of reported dengue
+cases (Mexican Ministry of Health), the \emph{ground truth}. The remaining columns
+(\texttt{dengue}, \texttt{sintomas de dengue}, \texttt{mosquito}, \texttt{dengue sintomas})
+are Google search interest, the same kind of series you scraped in the 9:45 session.
+
+\textbf{How to work it.} Two lanes lead to the same place; switch at any time.
+\begin{itemize}[nosep]
+  \item \textbf{Lane A (agent).} Drive a coding agent (Codex, Claude Code, or Antigravity
+        CLI) with the prompts in \texttt{notebooks/dengue\_exercise.ipynb} (they match the
+        slides). You describe each step; the agent writes and runs the code.
+  \item \textbf{Lane B (notebook).} Run the pre-filled
+        \texttt{notebooks/dengue\_exercise\_soln.ipynb} cell by cell.
+\end{itemize}
+You may use \textbf{Python or R}. Materials: \url{https://github.com/Shihao-Yang/sismid2026}.
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Plot the cases.} Plot \texttt{Dengue CDC} as a function of time. Then overlay
+        the \texttt{dengue} search series (a second y-axis helps, since the scales differ) and
+        print the correlation between the two columns. Do they rise and fall together? Is
+        there a lead or lag, or any gap or spike that could fool a model?
+
+  \item \textbf{Fit a line (least squares).} Using \textbf{only the first 36 months
+        (2004--2006)} as training, find the best line that explains cases from the
+        \texttt{dengue} search term:
+        \[
+          y_t = a + b\,x_t + \varepsilon_t, \qquad
+          (\hat a, \hat b) = \arg\min_{a,b}\sum_t \bigl(y_t - a - b\,x_t\bigr)^2 ,
+        \]
+        where $y_t$ is \texttt{Dengue CDC} and $x_t$ is \texttt{dengue}. Report the intercept
+        $\hat a$ and slope $\hat b$ and the in-sample $R^2$.
+
+  \item \textbf{Show the fit.} Plot the fitted line on top of a scatter of cases vs.\ search
+        for the training period, and compare against your plot from (a).
+
+  \item \textbf{Predict and validate.} Using the \emph{same} intercept and slope from (b),
+        predict dengue cases for the \textbf{validation period 2007--2011} from the
+        \texttt{dengue} search column \textbf{alone} (do not refit). Plot your predictions
+        against the actual cases and report the out-of-sample correlation and RMSE. Watch for
+        the common mistake of letting post-2006 data leak into the fit.
+
+  \item \textbf{Discuss.} How well does the cheap search signal stand in for the slow case
+        reports? Where does it drift? A good fit does not prove a correct model: name one
+        reason search and cases can correlate without search \emph{causing} anything, and one
+        way you would guard against being fooled.
+\end{enumerate}
+
+\vspace{0.3em}
+\noindent\textbf{Stretch (if you finish early): dynamic training + Lasso.} On the
+\texttt{sarahhbellum/Zika-tutorial}
+(\url{https://github.com/sarahhbellum/Zika-tutorial}) data, refit on a rolling 2-year
+window instead of once, and use Lasso ($\ell_1$) across many search terms so the useless
+ones drop out:
+\[
+  \min_{a,\,\boldsymbol\beta}\ \sum_t\Bigl(y_t - a - \textstyle\sum_j \beta_j x_{j,t}\Bigr)^2
+  + \lambda \sum_j |\beta_j| .
+\]
+
+\end{document}

@@ -1,0 +1,93 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue}
+\usepackage{parskip}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Exercise 0: Your First Scrape}\\[2pt]
+  {\normalsize SISMID 2026 \textbullet\ Day 1, 9:45 \textbullet\ Agent Coding Introduction}
+\end{center}
+
+\medskip
+
+Before we model any disease signal, we have to \emph{get} one. In this warm-up you set
+up an identical coding environment, stand up an AI coding agent, and use it (or a
+pre-filled notebook) to scrape your first novel data stream: \textbf{Google Dengue
+Trends for Mexico}. This is the same search signal you will model against reported
+dengue cases in the very next session, so the data you produce here carries straight
+into the 11:00 exercise. You do it in two parts: a small \emph{live} pull of a handful
+of terms, to learn the flow and see present-day searches, and then the \emph{historical}
+2004--2011 window that feeds the model.
+
+We start with Google Trends on purpose. It is the backbone of this whole course, and it
+is also \emph{awkward}: there is no official API and it actively rate-limits scrapers,
+so a live pull often fails and returns different numbers each time. That awkwardness is
+a lesson, not a bug, and it sets up this afternoon's session on preprocessing Trends.
+
+You may work in \textbf{Python or R}. Two lanes lead to the same place, and you may
+switch at any time:
+\begin{itemize}[nosep]
+  \item \textbf{Lane A (agent).} Drive a coding agent (Codex, Claude Code, or Antigravity
+        CLI) with the prompts in \texttt{notebooks/01\_data\_scraping\_intro.ipynb}.
+  \item \textbf{Lane B (notebook).} Run the pre-filled
+        \texttt{notebooks/01\_data\_scraping\_intro\_soln.ipynb} cell by cell.
+\end{itemize}
+
+\textbf{Materials.} Course repository:
+\url{https://github.com/Shihao-Yang/sismid2026}. Cached fallback data for this session:
+\texttt{data/google\_trends\_dengue\_mx\_cached.csv} (used automatically if a live pull
+is rate-limited).
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Set up an identical environment.} Open the course repository and launch
+        it one of three ways: (i) a \textbf{GitHub Codespace} from the browser
+        (\texttt{Code} $\rightarrow$ \texttt{Codespaces} $\rightarrow$ \texttt{Create});
+        (ii) \textbf{clone} the repository and work locally; or (iii) open the notebooks
+        in \textbf{Google Colab}. Run the smoke test
+        (\texttt{notebooks/00\_smoke\_test.ipynb}) and confirm you see the library
+        versions and ``Environment OK''.
+
+  \item \textbf{Stand up the coding agents.} In a terminal, run
+        \texttt{bash scripts/setup-agents.sh} to install the Codex, Claude Code, and Antigravity
+        CLIs, then authenticate using the method the instructors provide in class. Sanity
+        check: ask an agent to ``list the CSV files in \texttt{data/} and print the first
+        rows of each.'' (If you cannot get an agent working, use Lane B and continue; you
+        will not be blocked.)
+
+  \item \textbf{See it live (a handful of terms).} Using \texttt{pytrends}, pull a
+        \emph{handful} of dengue-related terms (\emph{dengue}, \emph{sintomas de dengue},
+        \emph{mosquito}) for \textbf{Mexico} (\texttt{geo=MX}) over the past five years
+        (\texttt{today 5-y}). Confirm the last data point lands on the \textbf{current
+        week}: this is a genuinely live pull. Keep it to a handful of terms, which is what
+        stays under Google's rate limit, and plot the three series.
+
+  \item \textbf{Historical window for 11:00.} Now pull the four terms (\emph{dengue},
+        \emph{sintomas de dengue}, \emph{mosquito}, \emph{dengue sintomas}) for Mexico over
+        \textbf{2004--2011}, the same period as the reported-case ground truth you model
+        next session. If a live pull is rate-limited, fall back to the cached CSV. Merge on
+        date and overlay all four. Which terms look like they track disease activity, and
+        which look like noise? (You will let least squares decide at 11:00.)
+
+  \item \textbf{Note the instability, then save.} Pull the single term \emph{dengue}
+        \textbf{twice} over the recent window. Google Trends is built from a sample of
+        searches, so pulls can differ: usually only slightly on the public 0--100 endpoint,
+        but substantially on the raw Health Trends API we discuss after lunch. Note what you
+        see, then save your historical four-term table as a tidy CSV (one date column, one
+        column per term). This is the file you carry into 11:00.
+
+  \item \textbf{Discuss.} Google Trends measures \emph{attention}, not infection, and it
+        is not reproducible from one pull to the next. Name two ways this could mislead a
+        naive model, and one thing you could do about the reproducibility problem.
+        (Hint: what happens if you average many pulls? We return to this after lunch.)
+\end{enumerate}
+
+\vfill
+\noindent\textit{Stretch:} change \texttt{geo} to your own country, or swap the keywords
+for a disease you care about, and rerun. If you are on Lane A, do it by editing a single
+sentence of your prompt.
+
+\end{document}

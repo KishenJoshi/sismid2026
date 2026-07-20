@@ -1,0 +1,261 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% ============================================================
+% SISMID 2026 -- Day 2, 3:30 session, Part 1
+% COVID-19 exercise (S. Yang + C. Djorno)
+% Accessing digital traces + detecting exponential growth.
+% Built on Mauricio's exercise 3 (MIGHTE-lab/SISMID25),
+% covid_traces_WA.csv. Also previews the Day 3 capstone.
+% Compile: pdflatex covid-exercise.tex  (run twice)
+% ============================================================
+
+\IfFileExists{beamerthememetropolis.sty}{
+  \usetheme{metropolis}
+  \metroset{progressbar=frametitle, sectionpage=progressbar, numbering=fraction}
+}{
+  \usetheme{Boadilla}
+  \usecolortheme{seahorse}
+  \setbeamertemplate{navigation symbols}{}
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{amsmath}
+
+\definecolor{AccentA}{HTML}{2A6F97}
+\definecolor{AccentB}{HTML}{C1666B}
+\definecolor{AccentC}{HTML}{3B8A5B}
+\setbeamercolor{frametitle}{bg=AccentA}
+\setbeamercolor{progress bar}{fg=AccentB}
+
+\definecolor{skbg}{rgb}{0.96,0.96,0.94}
+\lstdefinestyle{prompt}{
+  basicstyle=\ttfamily\scriptsize,
+  backgroundcolor=\color{skbg},
+  showstringspaces=false, breaklines=true,
+  frame=single, framesep=4pt, columns=fullflexible, numbers=none,
+}
+\lstset{style=prompt}
+
+\tikzset{
+  cbox/.style={draw=AccentA, very thick, rounded corners, align=center,
+    minimum height=1.0cm, inner sep=6pt, font=\small, fill=AccentA!6},
+  sbox/.style={draw=AccentA, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentA!6},
+  rbox/.style={draw=AccentB, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentB!8},
+  gbox/.style={draw=AccentC, thick, rounded corners, align=center,
+    minimum height=0.85cm, inner sep=4pt, font=\scriptsize, fill=AccentC!8},
+  flow/.style={-{Stealth[length=3mm]}, very thick, draw=AccentB},
+  flowq/.style={-{Stealth[length=2.4mm]}, thick, draw=AccentA!70},
+}
+
+\title{The COVID-19 Exercise}
+\subtitle{Digital traces, and detecting when an outbreak is taking off}
+\author{Shihao Yang \quad\textbullet\quad Candice Djorno}
+\institute{SISMID 2026 \textbullet\ Day 2, 3:30}
+\date{July 21, 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{A different question}
+  ARGO this afternoon asked \textbf{``how high is it?''} Early COVID asked a sharper one:
+  \begin{block}{Is it taking off, right now?}
+    Not the level, but the \textbf{onset}: is the curve in \textbf{exponential growth}? That
+    is the earliest, most actionable signal an outbreak gives.
+  \end{block}
+  \vspace{0.3em}
+  \begin{itemize}
+    \item Data: \textbf{COVID-19 in Washington State}, case counts plus five digital traces.
+    \item Same agent workflow; today the model is a growth detector, not a nowcaster.
+    \item Continues Mauricio's exercise 3 (\texttt{covid\_traces\_WA.csv}).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Roadmap}
+  \tableofcontents
+\end{frame}
+
+% ===============================================================
+\section{Accessing the digital traces}
+
+\begin{frame}{Five digital traces, one outbreak}
+  \texttt{covid\_traces\_WA.csv} pairs the ground truth with the novel streams of the COVID
+  era:
+  \begin{itemize}
+    \item \textbf{Ground truth:} \texttt{new\_cases} (positive tests).
+    \item \textbf{Traces:} \texttt{upToDate} (clinician search), \texttt{cdc\_ili},
+          \texttt{Twitter\_RelatedTweets}, \texttt{google\_fever}, \texttt{Kinsa}
+          (smart-thermometer fever), \texttt{Cuebiq\_Mobility}.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{center}
+    \itshape The whole course in one file: many independent digital traces, one disease to
+    track. (Pre-smoothed, so case counts are fractional.)
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Load and look first}
+  \begin{block}{Prompt}
+  \begin{lstlisting}
+Load covid_traces_WA.csv (daily, Washington State). In a
+6-panel plot, show new_cases and the five digital traces
+over time. Which traces look like they rise before cases
+(leading) and which after (lagging)?
+  \end{lstlisting}
+  \end{block}
+  \begin{itemize}
+    \item Before any algorithm, form the intuition by eye: where do outbreaks \emph{start},
+          and do any traces move first?
+    \item Leading traces are the prize: they are what an early-warning system watches.
+  \end{itemize}
+\end{frame}
+
+% ===============================================================
+\section{Detecting exponential growth}
+
+\begin{frame}{What ``exponential growth'' means, operationally}
+  Exponential growth is a \textbf{constant multiplicative factor} each step: today is roughly
+  $\alpha$ times a recent baseline, with $\alpha > 1$.
+  \begin{itemize}
+    \item Over a sliding 11-day window, regress the \textbf{next 10 days on the previous 10}
+          (through the origin, no intercept). The slope is $\alpha$.
+    \item $\alpha > 1$ means the trace is \textbf{growing}; $\alpha < 1$ means it is
+          receding.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{center}
+    \itshape Same idea as a log-linear fit: $\alpha \approx e^{r}$, so doubling time is
+    $\ln 2 / \ln \alpha$. The slope is just an easy, robust way to read it.
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Compute the growth factor}
+  \begin{block}{Prompt}
+  \begin{lstlisting}
+For new_cases, slide an 11-day window: in each window
+regress the last 10 days on the previous 10 with no
+intercept, and store the slope as alpha for that day.
+Then make a 3-panel plot: cases, alpha over time with a
+line at 1, and a 0/1 flag for alpha > 1.
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape Now ``is it growing?'' is a number you can watch every day, not a judgment call.
+  \end{center}
+\end{frame}
+
+% ===============================================================
+\section{From growth to an outbreak flag}
+
+\begin{frame}[fragile]{Turning the signal into a decision}
+  A single day of $\alpha>1$ is noise. A \textbf{sustained} run is an outbreak.
+  \begin{block}{Prompt}
+  \begin{lstlisting}
+Detect outbreak starts: when alpha > 1 for 10 consecutive
+days, mark that 10th day as an outbreak start (only the
+first such day). When alpha < 1 for 10 consecutive days,
+the outbreak is over and a later run can start a new one.
+Mark the detected starts on the case-count plot.
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape A tiny state machine on top of $\alpha$: growing, active, over, repeat.
+  \end{center}
+\end{frame}
+
+\begin{frame}{It finds the real Washington waves}
+  Run on \texttt{new\_cases}, the detector flags starts that line up with the actual COVID
+  waves:
+  \begin{center}
+  \footnotesize
+  \texttt{2020-03-10} \ \textbullet\ \ \texttt{2020-06-06} \ \textbullet\ \
+  \texttt{2020-09-27} \ \textbullet\ \ \texttt{2021-03-28 (Alpha)} \ \textbullet\ \
+  \texttt{2021-07-21 (Delta)} \ \textbullet\ \ \texttt{2021-12-29 (Omicron)}
+  \end{center}
+  \vspace{0.4em}
+  \begin{alertblock}{Verify, as always}
+    Do the marks match where \emph{you} said outbreaks start by eye? A detector that fires
+    late, or on every wobble, is worse than useless. Tune the window and threshold and see.
+  \end{alertblock}
+\end{frame}
+
+% ===============================================================
+\section{Multiple traces: early warning}
+
+\begin{frame}[fragile]{Do the traces flag growth before cases?}
+  The point of the digital traces: run the \emph{same} detector on each of them.
+  \begin{block}{Prompt}
+  \begin{lstlisting}
+Repeat the alpha computation and outbreak detection for
+each digital trace. Redo the 6-panel plot with each
+trace's outbreak starts marked. For each trace, report how
+many days before (or after) the case-count outbreak its
+own outbreak fires.
+  \end{lstlisting}
+  \end{block}
+  \begin{center}
+    \itshape If enough traces flag growth ahead of cases, you can call an imminent outbreak.
+    That is exactly Mauricio and Kogan's multi-trace early-warning idea.
+  \end{center}
+\end{frame}
+
+% ===============================================================
+\section{Wrap-up}
+
+\begin{frame}{What you built}
+  \begin{itemize}
+    \item An \textbf{onset detector}: a growth factor $\alpha$ and a small state machine that
+          calls the start of an outbreak, validated against the real WA waves.
+    \item A \textbf{multi-trace} version that asks which digital streams lead, the seed of an
+          early-warning system.
+    \item It complements ARGO: ARGO says \emph{how high}, this says \emph{it is taking off}.
+  \end{itemize}
+  \vfill
+  \begin{center}
+    \itshape Two questions, two tools, both built from simple regressions on novel data.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Looking ahead to Day 3: bring your own problem}
+  Tomorrow you build a situational-awareness product of your own. Start choosing now:
+  \begin{itemize}
+    \item \textbf{A disease:} flu, dengue, RSV, COVID, or something you work on.
+    \item \textbf{A place:} your county, your country, Georgia for the capstone framing.
+    \item \textbf{A question:} how high (ARGO), taking off (today), or where next (mobility)?
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{center}
+    \itshape Every skill this week is a Lego brick. Tomorrow you pick which bricks your
+    problem needs. (Mauricio's COVID research talk follows this exercise.)
+  \end{center}
+\end{frame}
+
+\begin{frame}{Credits and sources}
+  \footnotesize
+  \begin{itemize}
+    \item Exercise continues Mauricio Santillana's COVID exercise 3
+          (\texttt{MIGHTE-lab/SISMID25}); data \texttt{covid\_traces\_WA.csv} (Washington
+          State, daily, 2020--2021), pre-smoothed.
+    \item Traces: UpToDate clinician search, CDC ILI, Twitter, Google ``fever'', Kinsa
+          smart-thermometer fever, Cuebiq mobility.
+    \item Multi-trace early warning: Kogan, Santillana et al., \emph{An early warning
+          approach to monitor COVID-19 activity with multiple digital traces}, Science
+          Advances 2021.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[standout]
+  Questions?\\[0.4em]
+  \small Repo: \texttt{github.com/Shihao-Yang/sismid2026}
+\end{frame}
+
+\end{document}

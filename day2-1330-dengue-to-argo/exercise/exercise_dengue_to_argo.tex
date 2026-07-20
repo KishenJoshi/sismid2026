@@ -1,0 +1,79 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue}
+\usepackage{parskip}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Dengue Exercise (Part 2): From Least Squares to ARGO}\\[2pt]
+  {\normalsize SISMID 2026 \textbullet\ Day 2, 1:30 \textbullet\ From the Dengue Exercise to ARGO}
+\end{center}
+
+\medskip
+
+In the previous exercise you fit a \emph{static} model to predict dengue cases in Mexico
+using training data from 2004--2006: a single, unchanging line you use to predict all future
+cases. In this exercise you fit a \emph{dynamic} model that is retrained at each prediction
+step, then add more features until the model becomes a basic \textbf{ARGO} model
+(AutoRegression with Google search data). A short final part sketches the network
+(\textbf{ARGONet}) idea.
+
+You may work in \textbf{Python or R}, and either drive a coding agent (Codex, Claude Code,
+or Antigravity CLI) with a prompt per part, or fill in the pre-filled notebook. Data:
+\texttt{MX\_Dengue\_trends.csv} (\texttt{Dengue CDC} = reported cases; \texttt{dengue},
+\texttt{sintomas de dengue}, \texttt{mosquito}, \texttt{dengue sintomas} = Google search
+interest), from \url{https://github.com/MIGHTE-lab/SISMID25}.
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Dynamic (sliding-window) training.} In a sliding-window approach, the
+        original training period (Jan.\ 2004 -- Dec.\ 2006) fits a least squares model and
+        predicts the next time step (Jan.\ 2007). For the next prediction, the training
+        period shifts by one month (Feb.\ 2004 -- Jan.\ 2007) and the model is retrained.
+        Continue this for each prediction from 2007--2011 and store the predictions in a
+        vector.
+
+  \item \textbf{Compare to static.} Plot the cases predicted by the dynamic method against
+        the predictions from the static model and the ground truth.
+
+  \item \textbf{Score both.} Compute the mean square error (MSE, or RMSE) of both methods
+        against the ground truth. Which is better, and why?
+
+  \item \textbf{Add covariates.} Instead of just \texttt{dengue}, add the remaining Google
+        search terms as predictors in the dynamic model. How does the error change? With
+        many correlated terms, try \textbf{Lasso} ($\ell_1$-penalized regression) so useless
+        terms drop out on their own.
+
+  \item \textbf{Add autoregression (this is ARGO).} Use the fact that the model is refit each
+        step to add past observations of the ground truth as features. For the Jan.\ 2007
+        prediction, add the observed case counts from Nov.\ 2006 and Dec.\ 2006 (a
+        Google\,+\,AR2 model). Implement this dynamic model with autoregression and compare
+        its error to the others. This combination,
+        \[
+          y_t \;=\; \mu \;+\; \sum_{k=1}^{2}\beta_k\,y_{t-k}
+            \;+\; \sum_{j}\alpha_j\,x_{j,t} \;+\; \varepsilon_t,
+        \]
+        trained dynamically, is a basic \textbf{ARGO} model.
+
+        \emph{Hint:} shift the case-count column and stack it onto the feature matrix; the
+        first one or two windows may have fewer than 36 observations.
+
+  \item \textbf{Discuss and extend (ARGONet).} You should see the error fall at each step:
+        static $\to$ dynamic $\to$ +terms $\to$ +autoregression. Now suppose you had
+        \emph{several} locations (states or counties) instead of one country. \textbf{ARGONet}
+        adds a network step: borrow signal from connected neighbors, for example by adding a
+        neighbor's recent activity (or its own ARGO estimate) as an extra predictor, choosing
+        neighbors by shared movement or short-lag correlation. Sketch, in words or code, how
+        you would add one neighbor's lagged signal to the model above, and say when you would
+        expect it to help.
+\end{enumerate}
+
+\vfill
+\noindent\textit{Stretch:} refit ARGO with an $\ell_1$ penalty and a two-year rolling window
+(the full ARGO of Yang, Santillana \& Kou, PNAS 2015), and compare against the plain
+least-squares version.
+
+\end{document}

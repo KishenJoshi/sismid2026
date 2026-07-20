@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=blue}
+\usepackage{parskip}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries COVID-19 Exercise: Detecting Exponential Growth}\\[2pt]
+  {\normalsize SISMID 2026 \textbullet\ Day 2, 3:30 \textbullet\ COVID-19 exercise}
+\end{center}
+
+\medskip
+
+In this exercise you use digital traces to detect outbreaks of COVID-19 in Washington State.
+There are many ways to define an outbreak; here you use a simple, useful one: \textbf{sustained
+exponential growth} of the signal. Download \texttt{covid\_traces\_WA.csv}. The first
+non-date column, \texttt{new\_cases}, is the ground truth (positive tests). The remaining
+columns are digital traces: \texttt{upToDate} (clinician search), \texttt{cdc\_ili},
+\texttt{Twitter\_RelatedTweets}, \texttt{google\_fever}, \texttt{Kinsa} (smart-thermometer
+fever), and \texttt{Cuebiq\_Mobility}. The data is pre-smoothed, so case counts are
+fractional.
+
+You may work in \textbf{Python or R}, and either drive a coding agent (Codex, Claude Code, or
+Antigravity CLI) with a prompt per part, or fill in the pre-filled notebook. Data + solution:
+\url{https://github.com/MIGHTE-lab/SISMID25}.
+
+\begin{enumerate}[label=(\alph*)]
+  \item \textbf{Look first.} In a 6-panel plot, show the case counts and the five other
+        traces over time. By eye, where do outbreaks start? Do any traces show
+        ``outbreak'' behavior, and are they leading or lagging relative to cases?
+
+  \item \textbf{A growth factor.} Slide an 11-day window over \texttt{new\_cases}. In each
+        window, fit a linear regression of the last 10 days on the previous 10 days,
+        \textbf{with no intercept}. Collect the slope $\alpha_i$ for each day (the first ten
+        or so will be 0, which is fine). $\alpha_i$ is the multiplicative growth factor:
+        $\alpha_i > 1$ means the signal is growing.
+
+  \item \textbf{Read it.} Make a 3-panel plot: (i) the case curve, (ii) $\alpha$ over time
+        with a reference line at 1, and (iii) a 0/1 flag for $\alpha_i > 1$. Interpret
+        $\alpha$. (Note $\alpha \approx e^{r}$, so the doubling time is $\ln 2 / \ln
+        \alpha$.)
+
+  \item \textbf{Detect outbreaks.} When $\alpha_i > 1$ for 10 consecutive days (sustained
+        growth), mark an outbreak as active starting on the 10th day, but record only the
+        \emph{first} such day. Once there are 10 consecutive days without growth ($\alpha_i
+        < 1$), the outbreak is over; a later run of growth starts a new one. Implement this
+        and apply it to the case series.
+
+  \item \textbf{Mark the starts.} Redo the 3-panel plot from (c) with markers at the detected
+        outbreak starts. Do they match your intuition from (a)?
+
+  \item \textbf{Multi-trace early warning.} Repeat (b)-(e) for each of the other five traces.
+        Redraw the 6-panel plot with each trace's outbreak starts marked. For each trace,
+        report how many days before or after the case-count outbreak its own outbreak fires.
+        If enough traces flag growth ahead of cases, you can predict an imminent outbreak.
+\end{enumerate}
+
+\vfill
+\noindent\textit{Discuss:} which traces are the most reliable leading indicators, and what
+would make you trust (or distrust) a ``taking off'' alarm built from them?
+
+\end{document}
