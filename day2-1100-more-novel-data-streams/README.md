@@ -29,11 +29,15 @@ a free, agent-scrapable way into each**, with cached snapshots of the licensed o
   rainfall drive vector diseases. Free/scrapable via **Open-Meteo** (no key) and **ERA5**
   (Copernicus). Hands off the *modeling* of weather-as-modulator to Santillana's Day 2
   afternoon; here we just get the data.
-- **News alerts.** **ProMED** (ISID, human-curated, flagged COVID ~1 day before official)
-  and **HealthMap** (Brownstein/Freifeld; feeds WHO EIOS) are the established event-based
-  systems; **GDELT** (free, global, API) is the agent-scrapable option. Connects to
-  Kogan/Santillana multi-source COVID forecasting (searches + news + GLEAM), Science
-  Advances 2021.
+- **News alerts.** Four tools, in order of how easily we can use them:
+  - **GDELT** (free, global, **no key**) is the agent-scrapable one we use in class.
+  - **HealthMap** (Brownstein/Freifeld; feeds WHO EIOS) auto-reads news onto a world map.
+  - **ProMED** (ISID, human-curated, flagged COVID ~1 day before official) is the expert
+    counterpart.
+  - **Media Cloud** (200M+ stories in curated collections; the scholars' media-analysis
+    tool) needs a **free API key**, so it is a demo + take-home rather than an in-class pull.
+  Connects to Kogan/Santillana multi-source COVID forecasting (searches + news + GLEAM),
+  Science Advances 2021.
 
 ## The pattern
 
@@ -206,3 +210,10 @@ Slides, all six notebooks (3 Lane A / Lane B pairs), and four real cached snapsh
 place. Notebooks are valid JSON and every code cell parses; each cache was generated from a
 genuine live pull in July 2026 (see the numbers above). The notebooks need only `pandas` and
 `matplotlib` from the course `requirements.txt` (no `pytrends`, no API keys).
+
+## Media Cloud
+
+**Media Cloud** (200M+ stories, curated collections) is added to the news notebook as an
+optional bonus: the API needs a **free API key** (sign up at <https://search.mediacloud.org/>),
+so the cell runs only if `MEDIACLOUD_API_KEY` is set and otherwise skips cleanly. GDELT
+remains the no-key in-class path.

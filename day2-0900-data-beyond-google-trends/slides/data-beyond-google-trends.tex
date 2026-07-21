@@ -52,6 +52,9 @@
   flowq/.style={-{Stealth[length=2.4mm]}, thick, draw=AccentA!70},
 }
 
+% flow cue: hand off from slides to the notebook
+\newcommand{\tonb}[1]{\vspace{0.1em}\begin{flushright}\footnotesize\textcolor{AccentB}{$\blacktriangleright$~\textbf{#1}}\end{flushright}}
+
 \title{Data Beyond Google Trends}
 \subtitle{Wikipedia pageviews and wastewater, scraped with an agent}
 \author{Shihao Yang \quad\textbullet\quad Candice Djorno}
@@ -87,6 +90,96 @@
 
 \begin{frame}{Roadmap}
   \tableofcontents
+\end{frame}
+
+% ===============================================================
+\section{Google Trends revisited: the API}
+
+\begin{frame}{First, let us fix yesterday}
+  Before adding new streams, we repair the one you already know.
+  \begin{itemize}
+    \item Yesterday you scraped Google Trends with \texttt{pytrends} and met its two
+          problems: \textbf{HTTP 429} rate limits, and values that \textbf{change between
+          pulls}, because the public endpoint is \emph{sampled}.
+    \item There is an official \textbf{Google Trends API}. It returns the \textbf{same
+          normalized 0--100 index}, so nothing about your analysis changes.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lll}
+    \hline
+     & \textbf{pytrends (scraping)} & \textbf{Trends API} \\
+    \hline
+    Access   & unofficial endpoint          & documented API, needs a key \\
+    Failures & HTTP 429 roulette            & none in normal use \\
+    Values   & \textbf{resampled each pull} & \textbf{identical every pull} \\
+    Signal   & normalized 0--100            & \textbf{the same} 0--100 \\
+    \hline
+  \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Unlock the class key}
+  \begin{block}{In the terminal, before you start Jupyter}
+  \begin{lstlisting}
+source scripts/unlock-gt-api-key.sh
+  \end{lstlisting}
+  \end{block}
+  Exports \texttt{GT\_API}. If Jupyter is open, \textbf{restart the kernel}.
+  \begin{lstlisting}
+GET https://www.googleapis.com/trends/v1beta/graph
+    ?key=$GT_API
+    &terms=dengue&terms=/m/0cycc      # terms OR topic ids
+    &restrictions.geo=MX              # US, MX, US-GA ...
+    &restrictions.startDate=2021-07   # YYYY-MM
+    &restrictions.endDate=2026-07
+  \end{lstlisting}
+  \begin{itemize}
+    \item \textbf{Quota: 1,000 requests/day for the whole room}, health topics only.
+    \item Window length picks weekly vs monthly, exactly as on the website.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Term vs topic: why today needs topics}
+  A \textbf{term} is the literal string. A \textbf{topic} is Google's Knowledge Graph entity
+  (\texttt{/m/0cycc} = Influenza), folding together every spelling, synonym and
+  \textbf{language}.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lcccc}
+    \hline
+    \textbf{Country} & \multicolumn{2}{c}{\textbf{term ``flu''}} & \multicolumn{2}{c}{\textbf{topic /m/0cycc}} \\
+                     & max & mean & max & mean \\
+    \hline
+    United States & 88 & 22.1 & 100 & 24.9 \\
+    France        & 3  & 0.9  & \textbf{100} & \textbf{16.3} \\
+    Italy         & 4  & 1.6  & \textbf{100} & \textbf{17.7} \\
+    Mexico        & 4  & 1.7  & \textbf{100} & \textbf{37.1} \\
+    \hline
+  \end{tabular}
+  \end{center}
+  \vspace{0.2em}
+  \begin{center}
+    \itshape An English term is nearly silent abroad. One topic id works in every language,
+    which is what makes going multi-country today possible.
+  \end{center}
+  \tonb{Open \texttt{notebooks/00\_google\_trends\_api.ipynb} and pull your own topic.}
+\end{frame}
+
+\begin{frame}{What the API does not fix}
+  The API makes the \emph{delivery} reliable. It does not change what search \emph{is}.
+  \begin{itemize}
+    \item Google Trends still measures \textbf{attention}, not infection: news coverage moves
+          it too.
+    \item Low-volume places still return a lot of \textbf{zeros}.
+    \item The relationship to disease still \textbf{drifts} between seasons.
+  \end{itemize}
+  \vspace{0.3em}
+  \begin{alertblock}{So we still need other streams}
+    A reliable pipe does not make one signal sufficient. Next: streams that fail
+    \emph{differently}, so their errors do not line up.
+  \end{alertblock}
 \end{frame}
 
 % ===============================================================

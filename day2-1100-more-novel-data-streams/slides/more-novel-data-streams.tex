@@ -304,22 +304,22 @@ season.
   \end{center}
 \end{frame}
 
-\begin{frame}{Meet the sources: HealthMap, ProMED, GDELT}
-  Three ways the world finds out about an outbreak before the data exists.
+\begin{frame}{Meet the sources: four ways to watch the news}
   \begin{itemize}
     \item \textbf{HealthMap} reads news and official reports automatically and pins them on a
           world map. \texttt{healthmap.org}
-    \item \textbf{ProMED} is the opposite: real human experts, posting curated outbreak
-          reports since 1994. It flagged COVID about a day before the official notice.
+    \item \textbf{ProMED} is the opposite: human experts posting curated outbreak reports
+          since 1994. It flagged COVID about a day before the official notice.
           \texttt{promedmail.org}
-    \item \textbf{GDELT} indexes world news in 100+ languages and gives it away through a
-          free API, which is why it is the one we can scrape in class.
-          \texttt{gdeltproject.org}
+    \item \textbf{GDELT} indexes world news in 100+ languages, free and \textbf{with no key}.
+          That is why it is the one we scrape in class. \texttt{gdeltproject.org}
+    \item \textbf{Media Cloud} is the scholars' tool: 200M+ stories in curated
+          \emph{collections}, built for studying how a topic is covered. Needs a
+          \textbf{free API key}. \texttt{search.mediacloud.org}
   \end{itemize}
   \begin{exampleblock}{Open and demo}
-    Open \texttt{healthmap.org} and zoom to a region: every dot is a report. Then open
-    \texttt{promedmail.org} and read one post, to feel the difference between an automated
-    map and a curated expert alert.
+    \texttt{healthmap.org} (dots on a map), \texttt{promedmail.org} (one curated post), then
+    \texttt{search.mediacloud.org} (attention over time by outlet).
   \end{exampleblock}
 \end{frame}
 
@@ -384,22 +384,18 @@ newly reporting activity, as an emerging-outbreak watch.
 \end{frame}
 
 \begin{frame}{Meet the source: CMU Delphi (and the Facebook survey)}
-  You cannot get Facebook \emph{posts}, but you can get something better for our purposes:
-  for two years Facebook asked millions of users \textbf{``are you or anyone in your
-  household ill?''}, and Carnegie Mellon turned it into a public health signal.
+  You cannot get Facebook \emph{posts}, but for two years Facebook asked millions of users
+  \textbf{``is anyone in your household ill?''}, and Carnegie Mellon turned it into a public
+  health signal.
   \begin{itemize}
     \item Think of it as: \emph{``a nationwide symptom survey, every day, free.''}
-    \item It even ships \textbf{error bars and sample sizes}, which almost no other novel
-          stream does. It ran 2020 to June 2022, so it is a benchmark, not a live feed.
-    \item Delphi is a hub: medical claims, hospital admissions and more sit behind the same
-          free API.
+    \item It ships \textbf{error bars and sample sizes}, which almost no other novel stream
+          does. It ran 2020 to June 2022: a benchmark, not a live feed.
   \end{itemize}
   \begin{exampleblock}{Open and demo}
     \texttt{delphi.cmu.edu/covidcast/survey-results} \\
-    Delphi's \textbf{CTIS Dashboard}, their page for what they themselves label
-    ``\emph{the Facebook Covid Survey}''. Background at
-    \texttt{delphi.cmu.edu/epidemic-signals/ctis}; the exact signal we pull
-    (\texttt{smoothed\_wcli}) is defined in the signal dictionary at
+    Delphi's \textbf{CTIS Dashboard}, for what they themselves call
+    ``\emph{the Facebook Covid Survey}''. Signal definitions:
     \texttt{cmu-delphi.github.io/delphi-epidata}.
   \end{exampleblock}
 \end{frame}
