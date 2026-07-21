@@ -16,6 +16,11 @@ venv/
 secrets/*
 !secrets/*.enc
 !secrets/README.md
+# Google Trends key lives in its own subfolder (separate passcode, separate
+# unlock script) so scripts/claude-login.sh does not try to decrypt it.
+!secrets/gt-api/
+secrets/gt-api/*
+!secrets/gt-api/*.enc
 
 # Codex broker: never commit real Codex credentials, claim state, or the passcode.
 auth-*.json
@@ -27,3 +32,7 @@ passcode
 
 # OS
 .DS_Store
+
+# Editor / interpreter scratch
+*.pyc
+.Rhistory

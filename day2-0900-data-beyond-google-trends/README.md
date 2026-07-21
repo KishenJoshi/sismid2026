@@ -5,6 +5,15 @@ it, in depth, to two new streams that fail *differently* from search.
 
 ## What this session covers
 
+- **Google Trends revisited: the API (do this first).** Yesterday's `pytrends` scraping is
+  replaced by the official **Google Trends API** (`getGraph`): the **same normalized 0-100
+  index**, but no HTTP 429s and **identical values on every pull** (verified). Unlock with
+  `source scripts/unlock-gt-api-key.sh`, then restart the kernel. Includes the
+  **term vs topic** language lesson, which is what makes today's multi-country work
+  possible. See [`../docs/google-trends-api.md`](../docs/google-trends-api.md).
+  - It fixes *delivery*, not the signal: search is still attention rather than infection,
+    still zero-heavy in small places, and still drifts. Which is why we add other streams.
+
 - **Wikipedia pageviews** — a free, hourly, official Wikimedia REST API (no key). A
   complementary, **multi-language** access signal: the Spanish/Portuguese/English articles
   give country-level and non-English signal where Google Trends is thin, and unlike Google
@@ -30,12 +39,16 @@ slides/
   data-beyond-google-trends.tex   Beamer deck (metropolis theme)
   data-beyond-google-trends.pdf   compiled slides
 notebooks/
+  00_google_trends_api.ipynb          Lane A: prompts (Google Trends API revisit)
+  00_google_trends_api_soln.ipynb     Lane B: worked solution
   01_wikipedia_pageviews.ipynb        Lane A: prompts you give the agent
   01_wikipedia_pageviews_soln.ipynb   Lane B: agent output captured (worked solution)
   02_wastewater_nwss.ipynb            Lane A: prompts
   02_wastewater_nwss_soln.ipynb       Lane B: worked solution
   README.md                           what the notebooks are + the data table
 data/
+  gt_api_dengue_mx_cached.csv             real: 265 weekly points, dengue MX (API)
+  gt_api_flu_term_vs_topic_cached.csv     real: term vs topic, 4 countries (API)
   wikipedia_dengue_pageviews_cached.csv   real snapshot (120 months, en/es/pt)
   cdc_nwss_influenza_a_ga_cached.csv      real snapshot (7,093 GA flu-A samples, 27 sites)
 README.md

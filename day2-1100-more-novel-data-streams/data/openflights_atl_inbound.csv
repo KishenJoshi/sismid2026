@@ -1,0 +1,217 @@
+origin_country,origin_airport,origin_city,n_routes
+United States,ORD,Chicago,20
+United States,MIA,Miami,12
+United States,DEN,Denver,11
+United States,SFO,San Francisco,11
+United States,DFW,Dallas-Fort Worth,10
+Mexico,CUN,Cancun,9
+United States,IAD,Washington,9
+United States,IAH,Houston,9
+United States,IND,Indianapolis,9
+United States,JAX,Jacksonville,9
+United States,LAX,Los Angeles,9
+United States,MSY,New Orleans,9
+United States,PHL,Philadelphia,9
+United States,PHX,Phoenix,9
+United States,RDU,Raleigh-durham,9
+Mexico,MEX,Mexico City,8
+Puerto Rico,SJU,San Juan,8
+United Kingdom,LHR,London,8
+United States,CLT,Charlotte,8
+United States,CMH,Columbus,8
+United States,DTW,Detroit,8
+United States,FLL,Fort Lauderdale,8
+United States,MCI,Kansas City,8
+United States,MCO,Orlando,8
+United States,PBI,West Palm Beach,8
+United States,RSW,Fort Myers,8
+United States,SAN,San Diego,8
+United States,STL,St. Louis,8
+United States,TPA,Tampa,8
+United States,AUS,Austin,7
+United States,BDL,Windsor Locks,7
+United States,BOS,Boston,7
+United States,BWI,Baltimore,7
+United States,CVG,Cincinnati,7
+United States,DCA,Washington,7
+United States,EWR,Newark,7
+United States,JFK,New York,7
+United States,LAS,Las Vegas,7
+United States,LGA,New York,7
+United States,MEM,Memphis,7
+United States,MKE,Milwaukee,7
+United States,MSP,Minneapolis,7
+United States,ORF,Norfolk,7
+United States,PIT,Pittsburgh,7
+United States,RIC,Richmond,7
+United States,SAT,San Antonio,7
+Canada,YYZ,Toronto,6
+Germany,FRA,Frankfurt,6
+Mexico,GDL,Guadalajara,6
+Mexico,MTY,Monterrey,6
+United States,BHM,Birmingham,6
+United States,BNA,Nashville,6
+United States,CHS,Charleston,6
+United States,CLE,Cleveland,6
+United States,DAY,Dayton,6
+United States,HOU,Houston,6
+United States,OKC,Oklahoma City,6
+United States,SAV,Savannah,6
+United States,SDF,Louisville,6
+United States,SEA,Seattle,6
+United States,SLC,Salt Lake City,6
+United States,TYS,Knoxville,6
+Italy,FCO,Rome,5
+Mexico,CZM,Cozumel,5
+Mexico,SJD,San Jose Del Cabo,5
+United States,ABQ,Albuquerque,5
+United States,ALB,Albany,5
+United States,CAK,Akron,5
+United States,CHA,Chattanooga,5
+United States,GSO,Greensboro,5
+United States,GSP,Greenville,5
+United States,HSV,Huntsville,5
+United States,JAN,Jackson,5
+United States,MDW,Chicago,5
+United States,PNS,Pensacola,5
+United States,SRQ,Sarasota,5
+United States,TUS,Tucson,5
+United States,XNA,Bentonville,5
+Bahamas,NAS,Nassau,4
+France,CDG,Paris,4
+Jamaica,MBJ,Montego Bay,4
+Mexico,PVR,Puerto Vallarta,4
+Spain,MAD,Madrid,4
+United Kingdom,MAN,Manchester,4
+United States,ABY,Albany,4
+United States,AVL,Asheville,4
+United States,BUF,Buffalo,4
+United States,CAE,Columbia,4
+United States,CRW,Charleston,4
+United States,DAL,Dallas,4
+United States,EVV,Evansville,4
+United States,FWA,Fort Wayne,4
+United States,GNV,Gainesville,4
+United States,GPT,Gulfport,4
+United States,ICT,Wichita,4
+United States,ILM,Wilmington,4
+United States,LEX,Lexington KY,4
+United States,LIT,Little Rock,4
+United States,MDT,Harrisburg,4
+United States,MYR,Myrtle Beach,4
+United States,OMA,Omaha,4
+United States,PDX,Portland,4
+United States,ROA,Roanoke VA,4
+United States,ROC,Rochester,4
+United States,SMF,Sacramento,4
+United States,SNA,Santa Ana,4
+United States,SYR,Syracuse,4
+United States,TUL,Tulsa,4
+Aruba,AUA,Oranjestad,3
+Belgium,BRU,Brussels,3
+Canada,YUL,Montreal,3
+Dominican Republic,PUJ,Punta Cana,3
+Germany,DUS,Duesseldorf,3
+Germany,MUC,Munich,3
+Germany,STR,Stuttgart,3
+Ireland,DUB,Dublin,3
+Panama,PTY,Panama City,3
+United States,ABE,Allentown,3
+United States,AEX,Alexandria,3
+United States,AGS,Bush Field,3
+United States,ATW,Appleton,3
+United States,BMI,Bloomington,3
+United States,BQK,Brunswick,3
+United States,BTR,Baton Rouge,3
+United States,CHO,Charlottesville VA,3
+United States,CID,Cedar Rapids,3
+United States,CSG,Columbus,3
+United States,DAB,Daytona Beach,3
+United States,DHN,Dothan,3
+United States,DSM,Des Moines,3
+United States,ECP,Panama City,3
+United States,ELP,El Paso,3
+United States,EWN,New Bern,3
+United States,EYW,Key West,3
+United States,FAY,Fayetteville,3
+United States,FNT,Flint,3
+United States,FSM,Fort Smith,3
+United States,GRB,Green Bay,3
+United States,GRK,Killeen,3
+United States,GRR,Grand Rapids,3
+United States,GTR,Columbus Mississippi,3
+United States,HPN,White Plains,3
+United States,LFT,Lafayette,3
+United States,MGM,MONTGOMERY,3
+United States,MLB,Melbourne,3
+United States,MLI,Moline,3
+United States,MLU,Monroe,3
+United States,MOB,Mobile,3
+United States,MSN,Madison,3
+United States,OAJ,Jacksonville NC,3
+United States,PHF,Newport News,3
+United States,PIA,Peoria,3
+United States,PVD,Providence,3
+United States,SBN,South Bend,3
+United States,SGF,Springfield,3
+United States,SHV,Shreveport,3
+United States,TLH,Tallahassee,3
+United States,TRI,BRISTOL,3
+United States,VLD,Valdosta,3
+United States,VPS,Valparaiso,3
+Virgin Islands,STT,St. Thomas,3
+Brazil,GIG,Rio De Janeiro,2
+Chile,SCL,Santiago,2
+Costa Rica,LIR,Liberia,2
+Costa Rica,SJO,San Jose,2
+Guatemala,GUA,Guatemala City,2
+Netherlands,AMS,Amsterdam,2
+South Korea,ICN,Seoul,2
+United States,AVP,Scranton,2
+United States,AZO,Kalamazoo,2
+United States,BTV,Burlington,2
+United States,COS,Colorado Springs,2
+United States,HNL,Honolulu,2
+United States,LAN,Lansing,2
+United States,MBS,Saginaw,2
+United States,MHT,Manchester NH,2
+United States,SJC,San Jose,2
+Argentina,EZE,Buenos Aires,1
+Bahamas,FPO,Freeport,1
+Bahamas,GGT,Great Exuma,1
+Belize,BZE,Belize City,1
+Bermuda,BDA,Bermuda,1
+Brazil,BSB,Brasilia,1
+Brazil,GRU,Sao Paulo,1
+Cayman Islands,GCM,Georgetown,1
+Colombia,BOG,Bogota,1
+Dominican Republic,SDQ,Santo Domingo,1
+Ecuador,UIO,Quito,1
+El Salvador,SAL,San Salvador,1
+Haiti,PAP,Port-au-prince,1
+Honduras,RTB,Roatan,1
+Honduras,SAP,San Pedro Sula,1
+Honduras,TGU,Tegucigalpa,1
+Jamaica,KIN,Kingston,1
+Japan,NRT,Tokyo,1
+Mexico,BJX,Del Bajio,1
+Netherlands Antilles,BON,Kralendijk,1
+Netherlands Antilles,SXM,Philipsburg,1
+Nicaragua,MGA,Managua,1
+Nigeria,LOS,Lagos,1
+Peru,LIM,Lima,1
+Saint Lucia,UVF,Hewandorra,1
+South Africa,JNB,Johannesburg,1
+Switzerland,ZRH,Zurich,1
+Turks and Caicos Islands,PLS,Providenciales,1
+United Arab Emirates,DXB,Dubai,1
+United States,FAR,Fargo,1
+United States,FSD,Sioux Falls,1
+United States,LWB,Lewisburg,1
+United States,MCN,Macon,1
+United States,MEI,Meridian,1
+United States,MSL,Muscle Shoals,1
+United States,PIB,Hattiesburg/Laurel,1
+United States,TTN,Trenton,1
+United States,TUP,Tupelo,1
+Venezuela,CCS,Caracas,1

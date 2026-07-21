@@ -122,6 +122,22 @@
   \end{alertblock}
 \end{frame}
 
+\begin{frame}{Meet the source: US Census commuting data (LODES)}
+  Every year the Census links \textbf{where people live} to \textbf{where they work}, from
+  employment records. It is free, it covers the whole United States, and it goes down to the
+  neighbourhood.
+  \begin{itemize}
+    \item Think of it as: \emph{``how many people sleep in county A and work in county B?''}
+    \item That is the commuting shed, and it is the ground truth for which neighbours you
+          actually exchange people with every single day.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{onthemap.ces.census.gov} \\
+    A clickable map: pick a county, and watch the arrows showing where its workers come
+    from. Raw files live at \texttt{lehd.ces.census.gov/data/}.
+  \end{exampleblock}
+\end{frame}
+
 \begin{frame}[fragile]{Ground mobility you can actually scrape}
   \begin{itemize}
     \item \textbf{US Census LODES} (origin-destination commuting) is free and detailed: who
@@ -139,21 +155,81 @@ neighbors whose outbreaks tend to reach us first.
   \end{block}
 \end{frame}
 
+\begin{frame}{Meet the source: OpenFlights}
+  A volunteer-built, openly published database of the world's \textbf{airports and airline
+  routes}. Not passenger counts, but the \emph{wiring diagram} of global air travel.
+  \begin{itemize}
+    \item Think of it as: \emph{``which airports have a direct flight to mine, and where are
+          they?''}
+    \item That wiring is what turns a distant outbreak into a local case, which is the whole
+          idea behind importation risk.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{openflights.org} \\
+    Search an airport and it draws every route on a world map. The underlying
+    \texttt{routes.dat} and \texttt{airports.dat} are plain text files we read directly.
+  \end{exampleblock}
+\end{frame}
+
 \begin{frame}[fragile]{Air mobility you can actually scrape}
   \begin{itemize}
-    \item \textbf{OpenSky Network} exposes real flight data (ADS-B) through a free API, a
-          workable stand-in for OAG/IATA to rank inbound connections.
+    \item \textbf{OpenFlights} publishes a free, no-key table of airline routes: the
+          \emph{structure} of air connectivity, a workable stand-in for OAG/IATA.
+    \item \textbf{OpenSky Network} has real flight data (ADS-B), but its API now needs a
+          free account and OAuth2 credentials (anonymous requests get a 403), so it is a
+          take-home rather than an in-class pull.
     \item Cross-check which countries a place \textbf{exchanges} with using Wikipedia (a
           trick from our own planning), then reason about importation risk.
   \end{itemize}
   \begin{block}{Prompt}
   \begin{lstlisting}
-Using the OpenSky Network API, list arrivals into Atlanta
-(ATL) over the past month and tally them by origin
-airport and country. Rank the countries that connect to
-ATL the most, as a proxy for air-importation risk.
+Rank the countries that connect to Atlanta (ATL) as a
+proxy for air-importation risk. Use the free OpenFlights
+routes.dat + airports.dat (no key): count inbound routes
+to ATL by origin airport, map each to its country, and
+plot the top 10 excluding domestic.
   \end{lstlisting}
   \end{block}
+\end{frame}
+
+\begin{frame}{Asked for: Meta's AI for Good datasets}
+  A participant asked whether we could work with Meta's AI for Good data. Mostly
+  \textbf{yes}, because Meta publishes through the \textbf{Humanitarian Data Exchange}
+  (HDX), which has a free, open API.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lll}
+    \hline
+    \textbf{Dataset} & \textbf{In class?} & \textbf{How} \\
+    \hline
+    Relative Wealth Index      & \textbf{yes} & free per-country CSVs on HDX \\
+    Movement Distribution Maps & \textbf{yes} & free on HDX, CC BY, current to June 2026 \\
+    Activity Space Maps        & not directly & not on HDX; Meta's own portal \\
+    Points of Interest         & not directly & not on HDX under Meta \\
+    \hline
+  \end{tabular}
+  \end{center}
+  \vspace{0.2em}
+  \begin{center}
+    \itshape Two of the four are usable today, with no application. Details next slide.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Meet the source: Meta Data for Good (via HDX)}
+  Meta turns its data into \textbf{aggregated, privacy-protected} public goods and gives them
+  away through the humanitarian data portal the UN and NGOs use.
+  \begin{itemize}
+    \item \textbf{Relative Wealth Index}: how well-off each 2.4\,km square is. A useful
+          \emph{confounder}: wealth shapes housing, water storage and care-seeking.
+    \item \textbf{Movement Distribution}: how far people travel from home, by region and day.
+          The behaviour channel disease travels through.
+    \item \textbf{224 datasets} in total, including Social Connectedness and population
+          density maps.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{data.humdata.org/organization/meta} lists all 224, each with a Download button.
+    Meta's own write-ups: \texttt{dataforgood.facebook.com}.
+  \end{exampleblock}
 \end{frame}
 
 % ===============================================================
@@ -173,6 +249,22 @@ ATL the most, as a proxy for air-importation risk.
     \itshape Mauricio picks up the modeling of weather-as-modulator this afternoon; here we
     just get the data.
   \end{center}
+\end{frame}
+
+\begin{frame}{Meet the source: Open-Meteo}
+  A free weather service built for programs rather than people: give it a latitude,
+  longitude and date range, and it returns decades of daily weather. \textbf{No account, no
+  key, no cost} for our use.
+  \begin{itemize}
+    \item Think of it as: \emph{``the weather history of any point on Earth, as a table.''}
+    \item Behind it sits \textbf{ERA5}, the research-grade reanalysis that most
+          humidity-and-flu papers use, at \texttt{cds.climate.copernicus.eu}.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{open-meteo.com/en/docs/historical-weather-api} \\
+    A live form: type a city, tick \emph{temperature} and \emph{dew point}, and it builds the
+    exact web address that returns the data. Paste that link in a browser to see the numbers.
+  \end{exampleblock}
 \end{frame}
 
 \begin{frame}[fragile]{Weather you can actually scrape}
@@ -212,6 +304,25 @@ season.
   \end{center}
 \end{frame}
 
+\begin{frame}{Meet the sources: four ways to watch the news}
+  \begin{itemize}
+    \item \textbf{HealthMap} reads news and official reports automatically and pins them on a
+          world map. \texttt{healthmap.org}
+    \item \textbf{ProMED} is the opposite: human experts posting curated outbreak reports
+          since 1994. It flagged COVID about a day before the official notice.
+          \texttt{promedmail.org}
+    \item \textbf{GDELT} indexes world news in 100+ languages, free and \textbf{with no key}.
+          That is why it is the one we scrape in class. \texttt{gdeltproject.org}
+    \item \textbf{Media Cloud} is the scholars' tool: 200M+ stories in curated
+          \emph{collections}, built for studying how a topic is covered. Needs a
+          \textbf{free API key}. \texttt{search.mediacloud.org}
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{healthmap.org} (dots on a map), \texttt{promedmail.org} (one curated post), then
+    \texttt{search.mediacloud.org} (attention over time by outlet).
+  \end{exampleblock}
+\end{frame}
+
 \begin{frame}[fragile]{News you can actually scrape}
   \textbf{GDELT} monitors world news in 100+ languages, is 100\% free, and has an API,
   which makes it perfect for an agent. Or point the agent at a news filter directly.
@@ -227,6 +338,66 @@ newly reporting activity, as an emerging-outbreak watch.
     \itshape Noisy by nature: news reflects attention and reporting, so a human read is part
     of the loop.
   \end{center}
+\end{frame}
+
+% ===============================================================
+\section{Social and survey signals}
+
+\begin{frame}{What happened to Twitter and Facebook}
+  The streams that powered 2020 research have mostly closed their doors.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lll}
+    \hline
+    \textbf{Source} & \textbf{Today} & \textbf{Why it matters} \\
+    \hline
+    X / Twitter posts      & paid API since 2023   & the classic firehose is gone \\
+    Facebook posts         & CrowdTangle shut 2024 & research access by application only \\
+    Bluesky                & \textbf{open}         & the workable social option \\
+    Facebook symptom survey & \textbf{open} via CMU Delphi & the good part survived \\
+    \hline
+  \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  \begin{alertblock}{The lesson worth remembering}
+    Our own COVID exercise file still has \textbf{Twitter, Kinsa and Cuebiq} columns, and all
+    three of those streams are now closed or gone. Novel data streams are \textbf{fragile};
+    that is the argument for an agent that can re-scrape whatever exists today.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{Meet the source: Bluesky}
+  A public social network with an \textbf{open door}: anyone can read public posts without an
+  account, which is exactly what Twitter stopped allowing.
+  \begin{itemize}
+    \item Think of it as: \emph{``a Twitter-shaped network you are still allowed to read.''}
+    \item One catch: \textbf{keyword search} needs a login, but \textbf{finding accounts} and
+          \textbf{reading their public posts} does not. So we watch \emph{accounts}
+          (epidemiologists, health agencies) rather than searching words.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{bsky.app} \\
+    Search \emph{dengue} or \emph{outbreak} in the website's own search box (the browser can
+    do what the open API will not), then open a public-health account and scroll its feed.
+    That feed is exactly what our notebook reads.
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}{Meet the source: CMU Delphi (and the Facebook survey)}
+  You cannot get Facebook \emph{posts}, but for two years Facebook asked millions of users
+  \textbf{``is anyone in your household ill?''}, and Carnegie Mellon turned it into a public
+  health signal.
+  \begin{itemize}
+    \item Think of it as: \emph{``a nationwide symptom survey, every day, free.''}
+    \item It ships \textbf{error bars and sample sizes}, which almost no other novel stream
+          does. It ran 2020 to June 2022: a benchmark, not a live feed.
+  \end{itemize}
+  \begin{exampleblock}{Open and demo}
+    \texttt{delphi.cmu.edu/covidcast/survey-results} \\
+    Delphi's \textbf{CTIS Dashboard}, for what they themselves call
+    ``\emph{the Facebook Covid Survey}''. Signal definitions:
+    \texttt{cmu-delphi.github.io/delphi-epidata}.
+  \end{exampleblock}
 \end{frame}
 
 % ===============================================================
