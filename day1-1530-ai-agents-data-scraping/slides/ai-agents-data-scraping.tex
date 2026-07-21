@@ -186,20 +186,75 @@ zeros and the strongest seasonal signal?
 % ===============================================================
 \section{Making the scrape robust}
 
-\begin{frame}{Google Trends has no official API}
-  Google Trends is itself the messy case: no official API, an internal endpoint that keeps
-  changing, aggressive rate limits, and the sampling instability from this afternoon.
-  \begin{itemize}
-    \item \texttt{pytrends} scrapes that endpoint for you; when it breaks, the agent reads
-          the error, adjusts, and retries, instead of you fighting it.
-    \item You describe the \emph{outcome} (terms, geo, window, retry-on-429); the agent
-          writes the plumbing and hands you a tidy CSV.
-  \end{itemize}
+\begin{frame}{Scraping vs an API: use the key}
+  \texttt{pytrends} scrapes an \emph{unofficial} endpoint. It works, and it teaches the
+  gotchas, but it is not what you would run in production.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lll}
+    \hline
+     & \textbf{pytrends (scraping)} & \textbf{Trends API (\texttt{getGraph})} \\
+    \hline
+    Access      & unofficial endpoint      & documented API, needs a key \\
+    Failures    & HTTP 429 roulette        & none in normal use \\
+    Values      & \textbf{resampled each pull} & \textbf{identical every pull} \\
+    Signal      & normalized 0--100        & \textbf{the same} normalized 0--100 \\
+    \hline
+  \end{tabular}
+  \end{center}
   \vspace{0.3em}
-  \begin{block}{The shift}
-    Old way: fight an unofficial API for an afternoon. New way: a paragraph, then you are
-    checking a plot. The hard part becomes \textbf{judgment}, not plumbing.
+  \begin{alertblock}{Same signal, no roulette}
+    The API is a \textbf{drop-in replacement}: the same 0--100 index, the same weekly or
+    monthly resolution chosen by window length. You get a class key today.
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}[fragile]{Using the class key}
+  \begin{block}{Set it once, before you start Jupyter}
+  \begin{lstlisting}
+export GT_API='the key handed out in class'
+  \end{lstlisting}
   \end{block}
+  One call, no retry loop:
+  \begin{lstlisting}
+GET https://www.googleapis.com/trends/v1beta/graph
+    ?key=$GT_API
+    &terms=dengue&terms=/m/0cycc      # terms OR topic ids
+    &restrictions.geo=MX              # US, MX, US-GA ...
+    &restrictions.startDate=2021-07   # YYYY-MM
+    &restrictions.endDate=2026-07
+  \end{lstlisting}
+  \begin{itemize}
+    \item \textbf{Quota: 1,000 requests/day}, and \textbf{health topics only}. Please do not
+          burn it on finance data.
+    \item \textbf{Never commit the key.} It lives in an environment variable, not in a
+          notebook.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Term vs topic: the language lesson}
+  The API takes a literal \textbf{term} or a Knowledge Graph \textbf{topic id}
+  (\texttt{/m/0cycc} = Influenza), which folds together every spelling, synonym and
+  \emph{language} for the same concept.
+  \begin{center}
+  \footnotesize
+  \begin{tabular}{lcccc}
+    \hline
+    \textbf{Country} & \multicolumn{2}{c}{\textbf{term ``flu''}} & \multicolumn{2}{c}{\textbf{topic /m/0cycc}} \\
+                     & max & mean & max & mean \\
+    \hline
+    United States & 100 & --   & 100 & -- \\
+    France        & 3   & 0.9  & \textbf{100} & \textbf{16.3} \\
+    Italy         & 4   & 1.6  & \textbf{100} & \textbf{17.7} \\
+    Mexico        & 4   & 1.7  & \textbf{100} & \textbf{37.1} \\
+    \hline
+  \end{tabular}
+  \end{center}
+  \vspace{0.2em}
+  \begin{center}
+    \itshape An English term is nearly silent abroad. The topic sees \emph{grippe},
+    \emph{influenza} and \emph{gripe} alike, which is why cross-country work uses topics.
+  \end{center}
 \end{frame}
 
 \begin{frame}{Let the agent run the whole loop}
