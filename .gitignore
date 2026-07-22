@@ -36,3 +36,4 @@ passcode
 # Editor / interpreter scratch
 *.pyc
 .Rhistory
+.Rproj.user

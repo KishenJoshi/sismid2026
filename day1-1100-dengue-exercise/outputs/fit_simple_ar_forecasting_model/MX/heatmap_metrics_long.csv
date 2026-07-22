@@ -1,0 +1,49 @@
+geo,processing,model_predictor,max_lag,lag_label,metric,value
+MX,raw,AR only,1,lag 1,R2,0.9571633797803689
+MX,raw,AR only,1,lag 1,MAPE,34.874757334876776
+MX,raw,AR only,2,lag 2,R2,0.9533850145602109
+MX,raw,AR only,2,lag 2,MAPE,37.43268925243094
+MX,raw,AR only,3,lag 3,R2,0.9630816563982944
+MX,raw,AR only,3,lag 3,MAPE,33.2950427587747
+MX,processed,AR only,1,lag 1,R2,0.9571633797803689
+MX,processed,AR only,1,lag 1,MAPE,34.874757334876776
+MX,processed,AR only,2,lag 2,R2,0.9533850145602109
+MX,processed,AR only,2,lag 2,MAPE,37.43268925243094
+MX,processed,AR only,3,lag 3,R2,0.9630816563982944
+MX,processed,AR only,3,lag 3,MAPE,33.2950427587747
+MX,raw,ARX + dengue,1,lag 1,R2,0.9625720611209785
+MX,raw,ARX + dengue,1,lag 1,MAPE,34.77708790473098
+MX,raw,ARX + dengue,2,lag 2,R2,0.9643443311386701
+MX,raw,ARX + dengue,2,lag 2,MAPE,36.987171796250834
+MX,raw,ARX + dengue,3,lag 3,R2,0.9680045911379007
+MX,raw,ARX + dengue,3,lag 3,MAPE,34.16583017509882
+MX,raw,ARX + mosquito,1,lag 1,R2,0.9572195410818234
+MX,raw,ARX + mosquito,1,lag 1,MAPE,35.864118386032686
+MX,raw,ARX + mosquito,2,lag 2,R2,0.9535119421781433
+MX,raw,ARX + mosquito,2,lag 2,MAPE,38.509851049835284
+MX,raw,ARX + mosquito,3,lag 3,R2,0.9625758183528214
+MX,raw,ARX + mosquito,3,lag 3,MAPE,34.077074072543326
+MX,raw,ARX + sintomas_de_dengue,1,lag 1,R2,0.9576043811472682
+MX,raw,ARX + sintomas_de_dengue,1,lag 1,MAPE,35.32435046343386
+MX,raw,ARX + sintomas_de_dengue,2,lag 2,R2,0.9556058006191946
+MX,raw,ARX + sintomas_de_dengue,2,lag 2,MAPE,38.20860489519203
+MX,raw,ARX + sintomas_de_dengue,3,lag 3,R2,0.9645247793324698
+MX,raw,ARX + sintomas_de_dengue,3,lag 3,MAPE,36.578896775378574
+MX,processed,ARX + dengue,1,lag 1,R2,0.9706855091401435
+MX,processed,ARX + dengue,1,lag 1,MAPE,26.952672223748884
+MX,processed,ARX + dengue,2,lag 2,R2,0.9702604755844181
+MX,processed,ARX + dengue,2,lag 2,MAPE,29.161475018343552
+MX,processed,ARX + dengue,3,lag 3,R2,0.9682076705925584
+MX,processed,ARX + dengue,3,lag 3,MAPE,28.219606520398216
+MX,processed,ARX + mosquito,1,lag 1,R2,0.9574596597056279
+MX,processed,ARX + mosquito,1,lag 1,MAPE,35.13831045355651
+MX,processed,ARX + mosquito,2,lag 2,R2,0.9536061722828342
+MX,processed,ARX + mosquito,2,lag 2,MAPE,38.705848704709695
+MX,processed,ARX + mosquito,3,lag 3,R2,0.9634960725480664
+MX,processed,ARX + mosquito,3,lag 3,MAPE,33.97486608793055
+MX,processed,ARX + sintomas_de_dengue,1,lag 1,R2,0.9565425708407992
+MX,processed,ARX + sintomas_de_dengue,1,lag 1,MAPE,36.42401065300201
+MX,processed,ARX + sintomas_de_dengue,2,lag 2,R2,0.9543575814580729
+MX,processed,ARX + sintomas_de_dengue,2,lag 2,MAPE,40.89695340269865
+MX,processed,ARX + sintomas_de_dengue,3,lag 3,R2,0.9643419764627204
+MX,processed,ARX + sintomas_de_dengue,3,lag 3,MAPE,37.103716585229186
