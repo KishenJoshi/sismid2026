@@ -182,11 +182,26 @@ fit_argo_family <- function(
     stop("Too few complete training rows: ", nrow(des$x))
   }
 
+  # Drop near-constant columns (glmnet can choke on zero-variance features).
+  keep <- apply(des$x, 2L, function(col) {
+    v <- stats::var(col, na.rm = TRUE)
+    is.finite(v) && v > 1e-12
+  })
+  if (!any(keep)) stop("No usable predictors after dropping constant columns")
+  des$x <- des$x[, keep, drop = FALSE]
+  des$feature_names <- colnames(des$x)
+
   if (identical(model, "ar")) {
     fit_df <- as.data.frame(des$x)
     fit_df$y <- des$y
     lm_fit <- stats::lm(y ~ ., data = fit_df)
     coefs <- stats::coef(lm_fit)
+    beta_vec <- setNames(rep(0, length(des$feature_names)), des$feature_names)
+    for (nm in des$feature_names) {
+      if (nm %in% names(coefs) && is.finite(coefs[[nm]])) {
+        beta_vec[[nm]] <- unname(coefs[[nm]])
+      }
+    }
     return(list(
       model = "ar",
       type = "lm",
@@ -194,7 +209,7 @@ fit_argo_family <- function(
       feature_names = des$feature_names,
       lags = lags,
       intercept = unname(coefs[["(Intercept)"]]),
-      beta = setNames(unname(coefs[des$feature_names]), des$feature_names),
+      beta = beta_vec,
       lambda = NA_real_,
       n_nonzero_search = 0L
     ))
@@ -222,9 +237,14 @@ fit_argo_family <- function(
   lambda_hat <- cv_fit$lambda.1se
   beta_mat <- as.matrix(stats::coef(cv_fit, s = "lambda.1se"))
   intercept <- unname(beta_mat["(Intercept)", 1])
-  beta <- setNames(as.numeric(beta_mat[des$feature_names, 1]), des$feature_names)
+  beta <- setNames(rep(0, length(des$feature_names)), des$feature_names)
+  for (nm in des$feature_names) {
+    if (nm %in% rownames(beta_mat) && is.finite(beta_mat[nm, 1])) {
+      beta[[nm]] <- as.numeric(beta_mat[nm, 1])
+    }
+  }
   n_search <- sum(
-    grepl("^search_", names(beta)) & is.finite(beta) & abs(beta) > 0
+    grepl("^search_", names(beta)) & abs(beta) > 0
   )
 
   list(
@@ -278,7 +298,7 @@ nowcast_argo_family <- function(y_hist, fit_obj, horizon, x_all_mat = NULL) {
     }
 
     pred_log[[h]] <- fit_obj$intercept +
-      sum(fit_obj$beta[fit_obj$feature_names] * x_row[fit_obj$feature_names])
+      sum(fit_obj$beta * x_row[names(fit_obj$beta)], na.rm = TRUE)
   }
 
   predictions <- expm1(pred_log)
@@ -410,10 +430,25 @@ metrics_by_origin <- forecasts_long %>%
   ) %>%
   arrange(origin_week, model)
 
-write_csv(forecasts_long, file.path(out_dir, "forecasts_long.csv"))
-write_csv(metrics_by_lead, file.path(out_dir, "metrics_by_lead.csv"))
-write_csv(metrics_by_origin, file.path(out_dir, "metrics_by_origin.csv"))
-write_csv(coefs_long, file.path(out_dir, "selected_coefs_by_origin.csv"))
+write_csv_safe <- function(x, path) {
+  tryCatch(
+    {
+      write_csv(x, path)
+      invisible(TRUE)
+    },
+    error = function(e) {
+      alt <- paste0(tools::file_path_sans_ext(path), "_", format(Sys.time(), "%H%M%S"), ".csv")
+      warning("Could not write ", path, ": ", conditionMessage(e), "; trying ", alt)
+      write_csv(x, alt)
+      invisible(TRUE)
+    }
+  )
+}
+
+write_csv_safe(forecasts_long, file.path(out_dir, "forecasts_long.csv"))
+write_csv_safe(metrics_by_lead, file.path(out_dir, "metrics_by_lead.csv"))
+write_csv_safe(metrics_by_origin, file.path(out_dir, "metrics_by_origin.csv"))
+write_csv_safe(coefs_long, file.path(out_dir, "selected_coefs_by_origin.csv"))
 
 message("Wrote ", nrow(forecasts_long), " nowcast rows")
 message("Wrote metrics_by_lead (", nrow(metrics_by_lead), " rows)")
@@ -491,7 +526,7 @@ ggsave(
   dpi = 150
 )
 
-rolling_r2 <- function(df, window = 8L, boot_reps = 300L) {
+rolling_r2 <- function(df, window = 8L, boot_reps = 100L) {
   df <- arrange(df, origin_week)
   n_row <- nrow(df)
   out <- tibble(
@@ -533,10 +568,10 @@ origin_data <- forecasts_plot %>%
 set.seed(20260721)
 rolling_r2_data <- origin_data %>%
   group_by(prediction_lead, series) %>%
-  group_modify(~ rolling_r2(.x, window = 8L, boot_reps = 300L)) %>%
+  group_modify(~ rolling_r2(.x, window = 8L, boot_reps = 100L)) %>%
   ungroup()
 
-write_csv(
+write_csv_safe(
   rolling_r2_data,
   file.path(out_dir, "rolling_R2_by_origin_and_lead.csv")
 )
