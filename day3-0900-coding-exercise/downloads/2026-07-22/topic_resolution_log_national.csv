@@ -1,0 +1,22 @@
+topic_label,query_input,query_type,mid,topic_title,topic_type,geo
+Aedes,Aedes,topic,/m/01yz26,Aedes,Insect,MX
+Aedes_aegypti,Aedes aegypti,topic,/g/11g8p5gswz,Aedes aegypti,Topic+term_fallback,MX
+mosquito,mosquito,topic,/m/09f96,Mosquito,Insect,MX
+vector,vector,topic,/g/11b6zqhf78,Vector,Mathematics and physics,MX
+vector_control,vector control,topic,/m/04h48h,Vector control,Topic,MX
+space_spraying,space spraying,topic,/g/11h4qjkpwy,Street Art No Rules Notebook: Graffiti Angel Spray Can Journal Graffiti Art Composition Book Dotgrid Sketchbook Birthday Gift,Topic,MX
+dengue,dengue,topic,/m/09wsg,Dengue fever,Disease,MX
+dengue_control,dengue control,topic,/g/12bmfb_l3,Dengue and Dengue Hemorrhagic Fever,Book,MX
+standing_water,standing water,topic,/g/11clsw9g4k,Standing Water on Roof,Topic,MX
+source_management,source management,topic,/g/11fl9vdh8p,Supply Chain: Planning and Execution,Book,MX
+insecticide,insecticide,topic,/m/01366d,Insecticide,Topic,MX
+fogging,fogging,topic,/g/11y312vq8s,Fogging,Insect control,MX
+larvicide,larvicide,topic,/m/0f4hyg,Larvicide,Topic,MX
+fumigation,fumigation,topic,/m/03jcrn,Fumigation,Topic,MX
+breeding_site,breeding site,topic,/g/11mk_20g2z,Breeding Roulette,Book by Calvin Cox,MX
+insect_repellent,insect repellent,topic,/g/11f2_6ydrz,Insect Repellent,Topic+term_fallback,MX
+epidemic,epidemic,topic,/m/0hn9s,Epidemic,Topic,MX
+public_health,public health,topic,/m/02cm61,Public Health,Professional field,MX
+water_storage,water storage,topic,/m/0hncptf,Water storage,Topic,MX
+control_del_dengue,control del dengue,term,control del dengue,control del dengue,raw term,MX
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX

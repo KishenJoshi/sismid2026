@@ -2,6 +2,7 @@
 
 AR_LAGS <- c(1L, 12L, 24L)
 CLIMATE_LAGS <- 1:6
+GT_LAGS <- 1:3
 
 #' Add lag columns within each state for a numeric variable.
 add_group_lags <- function(df, var, lags, id_col = "rne_iso_code", time_col = "month_start") {
