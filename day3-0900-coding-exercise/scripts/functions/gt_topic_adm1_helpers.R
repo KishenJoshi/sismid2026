@@ -88,8 +88,8 @@ normalize_timeframe <- function(timeframe) {
 fetch_one_keyword_geo <- function(keyword,
                                   geo,
                                   timeframe,
-                                  tries = 4L,
-                                  wait_sec = 45) {
+                                  tries = 2L,
+                                  wait_sec = 30) {
   timeframe <- normalize_timeframe(timeframe)
   last_err <- NULL
   for (i in seq_len(tries)) {
@@ -131,7 +131,8 @@ fetch_one_keyword_geo <- function(keyword,
       return(NULL)
     }
     if (i < tries && rate_limited) {
-      wait <- wait_sec * i
+      # Cap backoff so a single geo cannot stall the whole scrape for minutes.
+      wait <- min(wait_sec * i, 60)
       message("  Attempt ", i, "/", tries, " failed (", msg, "); wait ", wait, "s")
       Sys.sleep(wait)
     } else if (i < tries) {

@@ -1,0 +1,9 @@
+topic_label,query_input,query_type,mid,topic_title,topic_type,geo
+fogging,fogging,topic,/g/11y312vq8s,Fogging,Insect control+term_fallback,MX-VER
+fogging,fogging,topic,/g/11y312vq8s,Fogging,Insect control,MX-YUC
+larvicide,larvicide,topic,/m/0f4hyg,Larvicide,Topic,MX-DUR
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX-NAY
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX-PUE
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX-QUE
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX-TLA
+control_de_vectores,control de vectores,term,control de vectores,control de vectores,raw term,MX-ZAC
