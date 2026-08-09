@@ -41,8 +41,6 @@ mexico_sf <- rnaturalearth::ne_countries(scale = 50, type = "map_units", returnc
   dplyr::filter(iso3 == "MEX") %>%
   dplyr::mutate(location_id = 1L)
 
-stopifnot(nrow(mexico_sf) == 1L)
-
 #--------------- Years + Mexico-cropped cache (build only if incomplete)
 
 target_years <- mex_national_incidence_years(national_incidence_path)

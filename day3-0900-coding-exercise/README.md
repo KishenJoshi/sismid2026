@@ -11,6 +11,7 @@ Assess whether vector-control-related Google Trends topics improve monthly dengu
 - **Trends:** one topic/term × one `MX-XX` geo at a time (independent 0–100 scaling)
 - **AR / seasonality:** ARGO-style lags **1, 12, 24** for cases (and for search terms in Trends models)
 - **Models:** INLA (PC priors + BYM2) climate vs Trends; brms horseshoe screen → spatial INLA (climate and Trends families each have a climate-only baseline)
+- **National bake-off (separate):** `scripts/05_test_inla_models_national.R` — national AR / climate rw2–dlnm / single-GT rw2 with PC priors + prior PPC (see `day3_lab_book/`)
 - **Evaluation:** expanding-window refits with all data through each origin; leads 1–6 months; **CRPS** + INLA WAIC/CPO/mode diagnostics
 
 ## Setup
